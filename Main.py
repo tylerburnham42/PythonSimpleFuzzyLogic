@@ -5,102 +5,28 @@ Created on Tue Mar 29 16:17:10 2016
 """
 import math
 import matplotlib.pyplot as plt
-from enum import Enum
-
-class Function_Type(Enum):
-    undefined = 1
-    triangle = 2
-    trapezoidal = 3
-    gaussian = 4
-    generalised_bell = 5
-    sigmoid = 6
-    
-    
-class Membership_Funtion():
-    a = 0
-    b = 0
-    c = 0
-    d = 0
-    function_type = Function_Type.undefined
-    
-    def __init__(self,function_type,a,b,c=0,d=0):
-        self.function_type = function_type
-        self.a = a
-        self.b = b
-        self.c = c
-        self.d = d
-    
-    def find(self,x):
-        if(self.function_type == Function_Type.undefined): 
-            print("Function_Type Undefined")
-            return -1        
-        
-        if(self.function_type == Function_Type.triangle):
-            return self.triangle_function(x)
-        elif(self.function_type == Function_Type.trapezoidal):
-            return self.trapezoidal_function(x)
-        elif(self.function_type == Function_Type.gaussian):
-            return self.gaussian_function(x)
-        elif(self.function_type == Function_Type.generalised_bell):
-            return self.generalised_bell_function(x)
-        elif(self.function_type == Function_Type.sigmoid):
-            return self.sigmoid_function(x)
-        
-        print("Function_Type Error")
-        return -1
-        
-
-    def find_capped(self,x_cap, x):
-        return min([self.find(x_cap),self.find(x)])
-    
-    def triangle_function(self, x):
-        return max([min([(x-self.a)/(self.b-self.a),(self.c-x)/(self.c-self.b)]), 0])
-    
-    def trapezoidal_function(self, x):
-        return max([min([(x-self.a)/(self.b-self.a),1,(self.d-x)/(self.d-self.c)]),0])
-        
-    def gaussian_function(self, x):
-        return math.e**(-((1/2)*(x-self.a)/self.b)**2)
-    
-    def generalised_bell_function(self,x):
-        return 1/(1+abs((x-self.c)/self.a)**(2*self.b))    
-    
-    def sigmoid_function(self,x):
-        return 1/(1+math.e**(-self.a*(x+self.b)))
+from MembershipFunction import Membership_Funtion
+from MembershipFunction import Function_Type
+from Integration import Integration_Helper
 
 
-
-def trapezoidal_rule(f, starting_limit, ending_limit, number_of_samples):
-    h = float(ending_limit - starting_limit) / number_of_samples
-    summ = 0.0
-    summ += f.find(starting_limit)/2.0
-    for i in range(1, number_of_samples):
-        summ += f.find(starting_limit + i*h)
-    summ += f.find(ending_limit)/2.0
-    return summ * h
-    
-def trapezoidal_rule_capped(f, starting_limit, ending_limit, number_of_samples, x_cap):
-    h = float(ending_limit - starting_limit) / number_of_samples
-    summ = 0.0
-    summ += f.find_capped(x_cap,starting_limit)/2.0
-    for i in range(1, number_of_samples):
-        summ += f.find_capped(x_cap,starting_limit + i*h)
-    summ += f.find_capped(x_cap,ending_limit)/2.0
-    return summ * h
 
 def plot_integral_of_function():
-    triangle = Membership_Funtion(Function_Type.triangle,0,5,10)
-    print(trapezoidal_rule(triangle, 0, 10, 100))
     
-    print(trapezoidal_rule_capped(triangle, 0, 10, 100, 4))
-
+    start =0
+    end = 11
+    steps = 100
+    shape = Membership_Funtion(Function_Type.trapezoidal,1,3,7,11)
+    centroid = Integration_Helper.Centroid(shape,start,end,steps)
+    print(centroid)
+    test_plot_function(centroid,shape)
 
 def test_plot_function(target, function):
 
 
     normal_list = []
     normal_list_capped = []
-    x_list = [i/10 for i in range(0,1300)]
+    x_list = [i/10 for i in range(0,110)]
     for x in x_list: 
         normal_list.append(function.find(x))   
         normal_list_capped.append(function.find_capped(x,target)) 
@@ -179,7 +105,7 @@ def main():
     VERY_WARM = 110
 
 
-    plot_integral_of_function()
+    
     
     current_triangle_temp_functions = []
     current_triangle_temp_functions.append(triangle_membership_function(VERY_COLD))
@@ -203,5 +129,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    plot_integral_of_function()
+#    main()
 
