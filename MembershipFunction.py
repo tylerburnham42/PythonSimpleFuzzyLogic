@@ -23,6 +23,7 @@ class Membership_Funtion():
     b = 0
     c = 0
     d = 0
+    y_cap = -1
     function_type = Function_Type.undefined
     
     def __init__(self,function_type,a,b,c=0,d=0):
@@ -53,9 +54,32 @@ class Membership_Funtion():
         print("Function_Type Error")
         return -1
         
+    def set_y_cap(self,y_cap):
+        self.y_cap = y_cap
+        
 
-    def find_capped(self,x_cap, x):
-        return min([self.find(x_cap),self.find(x)])
+    def find_capped(self,x, x_cap=-1):
+        if(x_cap==-1):
+            return min([self.y_cap ,self.find(x)])
+        else:
+            return min([self.find(x_cap),self.find(x)])
+        
+    def approximate(self, y, guess_low, guess_high):     
+        adv = 0 
+        adv_y = 10000
+        while((adv_y-y) > .1):
+            adv = (guess_low+guess_high)/2
+            adv_y = self.find(adv)
+            if(adv_y == y):
+                guess_low = adv
+                guess_high = adv
+            elif(adv_y > y):
+                guess_low = adv
+            else:
+                guess_high = adv
+            
+        return adv
+        
         
     def square_function(self, x):
         if(self.b-x > 0 and x-self.a > 0):
